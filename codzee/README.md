@@ -18,7 +18,7 @@ Docs at http://localhost:8000/docs
 |---|---|---|
 | GET | /health | Health check |
 | POST | /tasks | Create a task |
-| GET | /tasks | List tasks |
+| GET | /tasks | List tasks (`status`, `priority`, `q`, `limit`, `page`) |
 | GET | /tasks/{id} | Get one task |
 | PATCH | /tasks/{id}/complete | Mark done |
 | DELETE | /tasks/{id} | Delete a task |
