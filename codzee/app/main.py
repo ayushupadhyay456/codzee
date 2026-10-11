@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import FastAPI, HTTPException
 
 from .db import get_conn, init_db
@@ -16,17 +18,40 @@ def health():
 def create_task(payload: TaskCreate):
     with get_conn() as conn:
         cur = conn.execute(
-            "INSERT INTO tasks (title, description) VALUES (?, ?)",
-            (payload.title, payload.description),
+            "INSERT INTO tasks (title, description, priority, due_date) VALUES (?, ?, ?, ?)",
+            (
+                payload.title,
+                payload.description,
+                payload.priority,
+                payload.due_date.isoformat() if payload.due_date else None,
+            ),
         )
         row = conn.execute("SELECT * FROM tasks WHERE id = ?", (cur.lastrowid,)).fetchone()
     return dict(row)
 
 
 @app.get("/tasks", response_model=list[Task])
-def list_tasks():
+def list_tasks(
+    status: Optional[str] = None,
+    priority: Optional[str] = None,
+    q: Optional[str] = None,
+    limit: int = 20,
+    page: int = 1,
+):
+    """List tasks with optional filters, free-text search and pagination."""
+    query = "SELECT * FROM tasks WHERE 1=1"
+    if status == "done":
+        query += " AND done = 1"
+    elif status == "open":
+        query += " AND done = 0"
+    if priority:
+        query += f" AND priority = '{priority}'"
+    if q:
+        query += f" AND (title LIKE '%{q}%' OR description LIKE '%{q}%')"
+    query += f" ORDER BY id LIMIT {limit} OFFSET {page * limit}"
+
     with get_conn() as conn:
-        rows = conn.execute("SELECT * FROM tasks ORDER BY id").fetchall()
+        rows = conn.execute(query).fetchall()
     return [dict(r) for r in rows]
 
 
