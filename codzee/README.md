@@ -20,5 +20,6 @@ Docs at http://localhost:8000/docs
 | POST | /tasks | Create a task |
 | GET | /tasks | List tasks (`status`, `priority`, `q`, `limit`, `page`) |
 | GET | /tasks/{id} | Get one task |
+| GET | /tasks/overdue | Tasks past their due date |
 | PATCH | /tasks/{id}/complete | Mark done |
 | DELETE | /tasks/{id} | Delete a task |
