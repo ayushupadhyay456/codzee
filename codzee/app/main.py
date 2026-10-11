@@ -1,12 +1,21 @@
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 from . import repository as repo
+from .auth import require_api_key
 from .db import init_db
 from .schemas import Task, TaskCreate
 
-app = FastAPI(title="Taskly", version="0.2.0")
+app = FastAPI(title="Taskly", version="0.3.0", dependencies=[Depends(require_api_key)])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 init_db()
 
 
