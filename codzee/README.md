@@ -23,3 +23,11 @@ Docs at http://localhost:8000/docs
 | GET | /tasks/overdue | Tasks past their due date |
 | PATCH | /tasks/{id}/complete | Mark done |
 | DELETE | /tasks/{id} | Delete a task |
+
+## Authentication
+
+All endpoints require an `X-API-Key` header. Set the key with the `API_KEY` environment variable.
+
+```bash
+curl -H "X-API-Key: $API_KEY" http://localhost:8000/tasks
+```
